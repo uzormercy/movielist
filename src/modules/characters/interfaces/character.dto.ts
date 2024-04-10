@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ICharacter } from './character.interface';
+import { ICharacter, TCharacterAndLocation } from './character.interface';
 import { IResponseDto } from 'src/shared/types';
 
 export class CharacterResponseDto implements IResponseDto<ICharacter> {
@@ -23,5 +23,5 @@ export class CharacterResponseDto implements IResponseDto<ICharacter> {
       },
     },
   })
-  data: ICharacter;
+  data: TCharacterAndLocation;
 }

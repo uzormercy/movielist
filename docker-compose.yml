@@ -1,0 +1,27 @@
+version: '3'
+services:
+  db:
+    container_name: VendeaseDB
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: vendease_dev_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./volumes/vendease-data:/var/lib/postgresql/data
+
+  db-test:
+    container_name: VendeaseTestDB
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: vendease_test_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./volumes/vendease-test-data:/var/lib/postgresql/data

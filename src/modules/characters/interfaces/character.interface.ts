@@ -1,7 +1,7 @@
 export enum ECharacterStatus {
   ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
   UNKNOWN = 'UNKNOWN',
+  DEAD = 'DEAD',
 }
 
 export enum ECharacterGender {
@@ -34,4 +34,8 @@ export type TCharacterRequestWithFiltersAndSort = {
   limit: number;
   sort?: string;
   filter?: string;
+};
+
+export type TCharacterAndLocation = ICharacter & {
+  location: ILocation;
 };

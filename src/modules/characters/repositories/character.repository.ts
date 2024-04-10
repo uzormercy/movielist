@@ -2,6 +2,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { Character } from '../entities/character.entity';
 import { Injectable } from '@nestjs/common';
 import { OrderItem } from 'sequelize';
+import { Location } from '../entities/location.entity';
 
 @Injectable()
 export class CharacterRepository {
@@ -26,6 +27,13 @@ export class CharacterRepository {
       order: order.length > 0 ? order : [['id', 'ASC']], // Default sorting if no sortOptions provided
       offset,
       limit,
+      include: [
+        {
+          model: Location,
+          as: 'location',
+          attributes: ['id', 'name', 'latitude', 'longitude'],
+        },
+      ],
     });
   }
 }
