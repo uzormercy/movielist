@@ -1,21 +1,21 @@
+import { SequelizeModuleOptions } from '@nestjs/sequelize';
 require('dotenv/config');
-import { DataSourceOptions } from 'typeorm';
 
-const { DB_TYPE, DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD, DB_NAME } =
-  process.env;
+const { DB_HOST, DB_USERNAME, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
 
-export const connectionAttributes: DataSourceOptions = {
-  type: DB_TYPE as 'postgres',
+const database: SequelizeModuleOptions = {
+  dialect: 'postgres',
   host: DB_HOST,
-  port: DB_PORT as unknown as number,
   username: DB_USERNAME,
-  password: DB_PASSWORD,
   database: DB_NAME,
-  entities: ['dist/**/*.entity{.ts,.js}'],
-  synchronize: true,
+  password: DB_PASSWORD,
+  port: DB_PORT as unknown as number,
+  autoLoadModels: true,
+  synchronize: false,
+  logging: true,
 };
 
 export default {
-  port: parseInt(process.env.PORT, 10) || 3100,
-  database: connectionAttributes,
+  port: parseInt(process.env.PORT, 10) || 3000,
+  database,
 };

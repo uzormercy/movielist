@@ -1,44 +1,58 @@
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
-import {
   ICharacter,
-  TCharacterGender,
-  TCharacterStatus,
+  ECharacterGender,
+  ECharacterStatus,
 } from '../interfaces/character.interface';
 import { Location } from './location.entity';
+import { Tables } from 'src/shared/constants/table';
+import { DataTypes } from 'sequelize';
+import {
+  Column,
+  Model,
+  HasOne,
+  PrimaryKey,
+  Table,
+  BelongsToMany,
+} from 'sequelize-typescript';
+import { Episode } from 'src/modules/episodes/entities/episode.entity';
+import { EpisodeCharacter } from 'src/modules/episodes/entities/episode-character.entity';
 
-@Entity()
-export class Character implements ICharacter {
-  @PrimaryGeneratedColumn()
+@Table({
+  tableName: Tables.CHARACTERS,
+  timestamps: true,
+  underscored: true,
+  modelName: 'Character',
+})
+export class Character extends Model<Character> implements ICharacter {
+  @PrimaryKey
+  @Column
   id: string;
 
-  @Column({ name: 'first_name' })
-  firstname: string;
+  @Column
+  firstName: string;
 
-  @Column({ name: 'last_name' })
-  lastname: string;
+  @Column
+  lastName: string;
 
-  @Column({ type: String })
-  gender: TCharacterGender;
+  @Column({
+    type: DataTypes.ENUM(...Object.values(ECharacterGender)),
+    allowNull: false,
+  })
+  gender: ECharacterGender;
 
-  @Column({ type: String })
-  status: TCharacterStatus;
+  @Column({
+    type: DataTypes.ENUM(...Object.values(ECharacterStatus)),
+    allowNull: false,
+    defaultValue: ECharacterStatus.UNKNOWN,
+  })
+  status: ECharacterStatus;
 
-  @Column({ name: 'state_of_origin' })
+  @Column
   stateOfOrigin: string;
 
-  @Column({ name: 'created_at', default: new Date().toISOString() })
-  createdAt: string;
-
-  @Column({ name: 'updated_at', default: new Date().toISOString() })
-  updatedAt?: string;
-
-  @OneToOne(() => Location, (location) => location.character, { cascade: true })
-  @JoinColumn()
+  @HasOne(() => Location, 'characterId')
   location: Location;
+
+  @BelongsToMany(() => Episode, () => EpisodeCharacter)
+  episodes: Episode[];
 }

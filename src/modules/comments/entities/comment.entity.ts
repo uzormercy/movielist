@@ -1,20 +1,36 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { IComment } from '../interfaces/comment.interface';
+import { Episode } from '../../episodes/entities/episode.entity';
+import {
+  BelongsTo,
+  Column,
+  ForeignKey,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript';
+import { Tables } from 'src/shared/constants/table';
 
-@Entity()
-export class Comment implements IComment {
-  @PrimaryGeneratedColumn()
+@Table({
+  tableName: Tables.COMMENTS,
+  timestamps: true,
+  underscored: true,
+  modelName: 'Comment',
+})
+export class Comment extends Model<Comment> implements IComment {
+  @PrimaryKey
+  @Column
   id: string;
 
-  @Column()
+  @Column
   comment: string;
 
-  @Column()
+  @Column
   ipAddressLocation: string;
 
-  @Column({ name: 'created_at', default: new Date().toISOString() })
-  createdAt: string;
+  @ForeignKey(() => Episode)
+  @Column
+  episodeId: string;
 
-  @Column({ name: 'updated_at', default: new Date().toISOString() })
-  updatedAt?: string;
+  @BelongsTo(() => Episode)
+  episode: Episode;
 }

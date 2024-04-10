@@ -6,3 +6,14 @@ export interface IEpisode {
   createdAt?: string;
   updatedAt?: string;
 }
+
+export type TEpisodeRequest = {
+  page: number;
+  limit: number;
+};
+
+export interface IEpisodeCharacter {
+  id: string;
+  characterId: string;
+  episodeId: string;
+}

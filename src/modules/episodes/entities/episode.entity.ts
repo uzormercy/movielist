@@ -1,23 +1,40 @@
+import { Tables } from 'src/shared/constants/table';
+import { Comment } from '../../comments/entities/comment.entity';
 import { IEpisode } from '../interfaces/episode.interface';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BelongsToMany,
+  Column,
+  HasMany,
+  Model,
+  PrimaryKey,
+  Table,
+} from 'sequelize-typescript';
+import { Character } from '../../characters/entities/character.entity';
+import { EpisodeCharacter } from './episode-character.entity';
 
-@Entity()
-export class Episode implements IEpisode {
-  @PrimaryGeneratedColumn()
+@Table({
+  tableName: Tables.EPISODES,
+  timestamps: true,
+  underscored: true,
+  modelName: 'Episode',
+})
+export class Episode extends Model<Episode> implements IEpisode {
+  @PrimaryKey
+  @Column
   id: string;
 
-  @Column()
+  @Column
   name: string;
 
-  @Column({ name: 'release_date' })
+  @Column
   releaseDate: string;
 
-  @Column()
+  @Column
   code: string;
 
-  @Column({ name: 'created_at', default: new Date().toISOString() })
-  createdAt?: string;
+  @HasMany(() => Comment)
+  comments: Comment[];
 
-  @Column({ name: 'updated_at', default: new Date().toISOString() })
-  updatedAt?: string;
+  @BelongsToMany(() => Character, () => EpisodeCharacter)
+  characters: Character[];
 }

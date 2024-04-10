@@ -1,34 +1,39 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
 import { ILocation } from '../interfaces/character.interface';
 import { Character } from './character.entity';
+import { Tables } from 'src/shared/constants/table';
+import {
+  BelongsTo,
+  Column,
+  ForeignKey,
+  PrimaryKey,
+  Table,
+  Model,
+} from 'sequelize-typescript';
 
-@Entity()
-export class Location implements ILocation {
-  @PrimaryGeneratedColumn()
+@Table({
+  tableName: Tables.LOCATIONS,
+  timestamps: true,
+  underscored: true,
+  modelName: 'Location',
+})
+export class Location extends Model<Location> implements ILocation {
+  @PrimaryKey
+  @Column
   id: string;
 
-  @Column()
+  @Column
   name: string;
 
-  @Column()
+  @Column
   latitude: string;
 
-  @Column()
+  @Column
   longitude: string;
 
-  @Column({ name: 'created_at', default: new Date().toISOString() })
-  createdAt: string;
+  @ForeignKey(() => Character)
+  @Column
+  characterId: string;
 
-  @Column({ name: 'updated_at', default: new Date().toISOString() })
-  updatedAt?: string;
-
-  @OneToOne(() => Character, (character) => character.location)
-  @JoinColumn()
+  @BelongsTo(() => Character)
   character: Character;
 }
