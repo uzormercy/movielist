@@ -32,6 +32,8 @@
 $ yarn install
 ```
 
+- Note: Before running the application ensure you create .env file in the root directory, take an example from the .env.example file and provide all values
+
 ## Running the app
 
 ```bash
@@ -43,6 +45,15 @@ $ yarn run start:dev
 
 # production mode
 $ yarn run start:prod
+```
+
+## API DOCUMENTATION
+
+```bash
+# development & # staging
+ NB: You can access the api documentation through this route and this is only accessible in the development and staging environment
+
+  http://domain/api/v1/docs
 ```
 
 ## Test
