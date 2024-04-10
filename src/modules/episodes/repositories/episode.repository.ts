@@ -3,8 +3,7 @@ import { Episode } from '../entities/episode.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { Comment } from '../../comments/entities/comment.entity';
 import { Character } from '../../characters/entities/character.entity';
-import { Sequelize } from 'sequelize';
-// import { Sequelize } from 'sequelize-typescript';
+import { literal } from 'sequelize';
 
 @Injectable()
 export class EpisodeRepository {
@@ -26,11 +25,13 @@ export class EpisodeRepository {
           model: Comment,
           as: 'comments',
           attributes: [],
+          required: false,
         },
       ],
       attributes: {
         include: [
-          [Sequelize.fn('COUNT', Sequelize.col('comments.id')), 'commentCount'],
+          // [Sequelize.fn('COUNT', Sequelize.col('comments.id')), 'commentCount'],
+          [literal('COUNT(DISTINCT(comments.id))'), 'commentCount'],
           // Include any other attributes you need for the Episode model
         ],
       },
@@ -41,7 +42,7 @@ export class EpisodeRepository {
     });
   }
 
-  async getEpisodesByCharacter(id: number): Promise<any> {
+  async getEpisodesByCharacter(id: string): Promise<any> {
     return this.characterEntity.findByPk(id, {
       include: [
         {

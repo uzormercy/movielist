@@ -1,5 +1,5 @@
 export interface IComment {
-  id: string;
+  id?: string;
   comment: string;
   ipAddressLocation: string;
   createdAt?: string;
