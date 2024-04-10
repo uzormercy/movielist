@@ -12,7 +12,7 @@ const database: SequelizeModuleOptions = {
   port: DB_PORT as unknown as number,
   autoLoadModels: true,
   synchronize: false,
-  logging: true,
+  logging: false,
 };
 
 export default {

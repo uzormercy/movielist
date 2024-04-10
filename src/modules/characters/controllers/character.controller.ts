@@ -55,10 +55,10 @@ export class CharacterController {
   })
   async getCharacters(
     @Res() res: Response,
-    @Query('page') page: number = 1,
-    @Query('limit') limit: number = 25,
     @Query('sort') sort: string,
     @Query('filter') filters: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 25,
   ): Promise<Response> {
     const parsedFilters = filters ? JSON.parse(filters) : {};
     const parsedSortOptions = sort ? JSON.parse(sort) : {};

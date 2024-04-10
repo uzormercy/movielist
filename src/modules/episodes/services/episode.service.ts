@@ -14,9 +14,12 @@ export class EpisodeService {
     this.logger.log(EpisodeService.name);
   }
 
-  async getEpisodes(): Promise<IResponseData> {
+  async getEpisodes(page: number, limit: number): Promise<IResponseData> {
     this.logger.log('Request to get episodes');
-    const episodes = await this.episodeRepository.getEpisodesWithComments();
+    const episodes = await this.episodeRepository.getEpisodesWithComments(
+      page,
+      limit,
+    );
     if (!episodes) {
       this.logger.error('Unable to retrieve episodes', { episodes });
       return this.response.returnResult({

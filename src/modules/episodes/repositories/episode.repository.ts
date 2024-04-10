@@ -2,8 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Episode } from '../entities/episode.entity';
 import { InjectModel } from '@nestjs/sequelize';
 import { Character } from '../../characters/entities/character.entity';
-import { col, fn } from 'sequelize';
-import { Comment } from 'src/modules/comments/entities/comment.entity';
+import { QueryTypes } from 'sequelize';
 
 @Injectable()
 export class EpisodeRepository {
@@ -14,23 +13,42 @@ export class EpisodeRepository {
     private characterEntity: typeof Character,
   ) {}
 
-  async getEpisodesWithComments(): Promise<any> {
-    const episodes = await this.episodeEntity.findAll({
-      attributes: {
-        include: [[fn('COUNT', col('comments.id')), 'commentCount']],
-      },
-      include: [
-        {
-          model: Comment,
-          as: 'comments',
-          attributes: [],
-        },
-      ],
-      group: ['Episode.id'],
-      order: [['releaseDate', 'ASC']],
-    });
+  async getEpisodesWithComments(
+    page: number = 1,
+    limit: number = 25,
+  ): Promise<any> {
+    const sqlQuery = `
+        SELECT 
+            e.*, 
+            COALESCE(c.comment_count, 0) AS comment_count
+        FROM 
+            episodes e
+        LEFT JOIN (
+            SELECT 
+                episode_id, 
+                COUNT(*) AS comment_count
+            FROM 
+                comments
+            GROUP BY 
+                episode_id
+        ) c ON e.id = c.episode_id
+        ORDER BY 
+            e.release_date ASC
+        OFFSET 
+            :offset
+        LIMIT 
+            :limit;
+    `;
 
-    return episodes;
+    const replacements = {
+      offset: (page - 1) * limit,
+      limit: limit,
+    };
+
+    return this.episodeEntity.sequelize.query(sqlQuery, {
+      replacements: replacements,
+      type: QueryTypes.SELECT,
+    });
   }
 
   async getEpisodesByCharacter(id: string): Promise<any> {

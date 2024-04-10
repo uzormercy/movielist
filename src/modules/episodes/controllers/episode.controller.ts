@@ -4,6 +4,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Query,
   Res,
 } from '@nestjs/common';
 import { EpisodeService } from '../services/episode.service';
@@ -54,8 +55,12 @@ export class EpisodeController {
     status: 400,
     description: 'Unable to retrieve episodes',
   })
-  async getEpisodes(@Res() res: Response): Promise<Response> {
-    const episode = await this.episodeService.getEpisodes();
+  async getEpisodes(
+    @Res() res: Response,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 25,
+  ): Promise<Response> {
+    const episode = await this.episodeService.getEpisodes(page, limit);
     if (!episode.success) {
       return res.status(400).json({ message: episode.message });
     }
