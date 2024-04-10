@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { Episode } from '../entities/episode.entity';
 import { InjectModel } from '@nestjs/sequelize';
-import { Comment } from '../../comments/entities/comment.entity';
 import { Character } from '../../characters/entities/character.entity';
-import { literal } from 'sequelize';
+import { col, fn } from 'sequelize';
+import { Comment } from 'src/modules/comments/entities/comment.entity';
 
 @Injectable()
 export class EpisodeRepository {
@@ -14,32 +14,23 @@ export class EpisodeRepository {
     private characterEntity: typeof Character,
   ) {}
 
-  async getEpisodesWithComments(
-    page: number = 1,
-    limit: number = 25,
-  ): Promise<any> {
-    const offset = (page - 1) * limit;
-    return await this.episodeEntity.findAndCountAll({
+  async getEpisodesWithComments(): Promise<any> {
+    const episodes = await this.episodeEntity.findAll({
+      attributes: {
+        include: [[fn('COUNT', col('comments.id')), 'commentCount']],
+      },
       include: [
         {
           model: Comment,
           as: 'comments',
           attributes: [],
-          required: false,
         },
       ],
-      attributes: {
-        include: [
-          // [Sequelize.fn('COUNT', Sequelize.col('comments.id')), 'commentCount'],
-          [literal('COUNT(DISTINCT(comments.id))'), 'commentCount'],
-          // Include any other attributes you need for the Episode model
-        ],
-      },
-      group: ['Episode.id', 'comments.id'],
+      group: ['Episode.id'],
       order: [['releaseDate', 'ASC']],
-      offset,
-      limit,
     });
+
+    return episodes;
   }
 
   async getEpisodesByCharacter(id: string): Promise<any> {
@@ -47,7 +38,7 @@ export class EpisodeRepository {
       include: [
         {
           model: Episode,
-          through: { attributes: ['name', 'releaseDate', 'code'] }, // Exclude attributes from the join table
+          through: { attributes: ['name', 'releaseDate', 'code'] },
         },
       ],
     });

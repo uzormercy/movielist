@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { EpisodeRepository } from '../repositories/episode.repository';
 import { ResponseService } from 'src/shared/utils/respond.service';
 import { IResponseData } from 'src/shared/utils/interfaces';
-import { IEpisode, TEpisodeRequest } from '../interfaces/episode.interface';
 
 @Injectable()
 export class EpisodeService {
@@ -15,14 +14,9 @@ export class EpisodeService {
     this.logger.log(EpisodeService.name);
   }
 
-  async getEpisodes(
-    episodeRequest: TEpisodeRequest,
-  ): Promise<IResponseData<{ count: number; rows: IEpisode[] }>> {
+  async getEpisodes(): Promise<IResponseData> {
     this.logger.log('Request to get episodes');
-    const episodes = await this.episodeRepository.getEpisodesWithComments(
-      episodeRequest.page,
-      episodeRequest.limit,
-    );
+    const episodes = await this.episodeRepository.getEpisodesWithComments();
     if (!episodes) {
       this.logger.error('Unable to retrieve episodes', { episodes });
       return this.response.returnResult({

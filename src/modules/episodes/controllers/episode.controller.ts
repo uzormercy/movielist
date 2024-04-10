@@ -54,12 +54,8 @@ export class EpisodeController {
     status: 400,
     description: 'Unable to retrieve episodes',
   })
-  async getEpisodes(
-    @Res() res: Response,
-    @Param('page') page: number,
-    @Param('limit') limit: number,
-  ): Promise<Response> {
-    const episode = await this.episodeService.getEpisodes({ page, limit });
+  async getEpisodes(@Res() res: Response): Promise<Response> {
+    const episode = await this.episodeService.getEpisodes();
     if (!episode.success) {
       return res.status(400).json({ message: episode.message });
     }
